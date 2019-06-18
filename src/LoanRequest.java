@@ -1,31 +1,39 @@
 
 public class LoanRequest {
-	Customer cust;
-	Bank bank;
+	String cust;
+	String bank;
 	int amount;
 	int amountIssued;
 
-	public LoanRequest(Customer custt, Bank bankk, int amountt,int amountIssuedd) {
+	public LoanRequest(String custt, String bankk, int amountt,int amountIssuedd) {
 		cust = custt;
 		bank = bankk;
 		amount = amountt;
 		amountIssued = amountIssuedd;
 	}
 
-	public Customer getCust() {
+	public String getCust() {
 		return cust;
 	}
 
-	public void setCust(Customer cust) {
+	public void setCust(String cust) {
 		this.cust = cust;
 	}
 
-	public Bank getBank() {
+	public String getBank() {
 		return bank;
 	}
 
-	public void setBank(Bank bank) {
+	public void setBank(String bank) {
 		this.bank = bank;
+	}
+
+	public int getAmountIssued() {
+		return amountIssued;
+	}
+
+	public void setAmountIssued(int amountIssued) {
+		this.amountIssued = amountIssued;
 	}
 
 	public int getAmount() {

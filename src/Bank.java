@@ -22,58 +22,54 @@ public class Bank extends Thread {
 	@Override
 	public void run() {
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		resolveReqeust(this, custName, balance, requestHM);
+		resolveRequest(this, custName, balance, requestHM);
+		System.out.println(this.name+" has "+balance +" dollar(s) remaining.");
 	}
 
-	public synchronized void resolveReqeust(Bank bank, String custName, int bankBalance,
+	public synchronized void resolveRequest(Bank bank, String custName, int bankBalance,
 			ConcurrentHashMap<String, LoanRequest> requestHM) {
 		try {
-			System.out.println("size:bank " + requestHM.size());
+			 System.out.println("size:bank " + requestHM.size());
 			while (!requestHM.isEmpty()) {
-				boolean flag = false;
-				System.out.println("size:bank " + requestHM.size());
-				if (requestHM.size() > 0) {
-					while (!requestHM.isEmpty()) {
-						for (String s : requestHM.keySet()) {
-							// System.out.println("Processing key: "+s);
-							if (requestHM.get(s).bank.name.equalsIgnoreCase(Thread.currentThread().getName())) {
-								LoanRequest lr = (LoanRequest) requestHM.get(s);
-								System.out.println("Name matched.");
-								System.out.println(lr.bank.name);
-								System.out.println(Thread.currentThread().getName());
-								if (lr != null && lr.bank != null
-										&& lr.bank.name.equalsIgnoreCase(Thread.currentThread().getName())) {
-									System.out.println("bankBalance: " + bankBalance);
-									System.out.println("lr.amount " + lr.amount);
-									if (bankBalance >= lr.amount) {
-										System.out.println("Bank: "+1);
-										requestHM.remove(s);
-										bankBalance = bankBalance - lr.amount;
-										System.out.println(lr.bank.name + " approves a loan of " + lr.amount
-												+ " dollars from " + lr.cust.name);
+				//System.out.println("size:bank " + requestHM.size());
+				for (String s : requestHM.keySet()) {
+					if (requestHM.get(s).bank.equalsIgnoreCase(Thread.currentThread().getName())) {
+						//System.out.println("Cust: " + requestHM.get(s).getCust());
+						//System.out.println("Bank: " + requestHM.get(s).getBank());
+						if (requestHM.get(s).cust != null && requestHM.get(s).cust.length() > 0) {
+							LoanRequest lr = (LoanRequest) requestHM.get(s);
+							System.out.println("Name matched.");
 
-										LoanRequest newlr = new LoanRequest(lr.cust, this, -1, lr.amount);
-										requestHM.put(this.name, newlr);
-									} else {
-										System.out.println("Bank: "+2);
-										
-										//requestHM.remove(s);
-										System.out.println(lr.bank.name + " denies a loan of " + lr.amount
-												+ " dollars from " + lr.cust.name);
-										LoanRequest newlr = new LoanRequest(lr.cust, this, -1, -1);
-										requestHM.put(this.name, newlr);
-									}
+							if (lr != null && lr.bank != null) {
+								System.out.println("2");
+								System.out.println("bankBalance: " + balance);
+								System.out.println("lr.amount " + lr.amount);
+								if (balance >= lr.amount) {
+									System.out.println("Bank: " + 1);
+									requestHM.remove(s);
+									balance = balance - lr.amount;
+									System.out.println(
+											lr.bank + " approves a loan of " + lr.amount + " dollars from " + lr.cust);
+
+									LoanRequest newlr = new LoanRequest("", this.name, -1, lr.amount);
+									requestHM.put(lr.cust, newlr);
+								} else {
+									System.out.println("Bank: " + 2);
+									requestHM.remove(s);
+									// requestHM.remove(s);
+									System.out.println(
+											lr.bank + " denies a loan of " + lr.amount + " dollars from " + lr.cust);
+									LoanRequest newlr = new LoanRequest("", this.name, -1, -1);
+									requestHM.put(this.name, newlr);
 								}
 							}
 						}
-						// System.out.println("Processing the request in money thread.");
 					}
-				}
+				}			
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -47,13 +47,12 @@ public class Customer extends Thread {
 			int amount = rand.nextInt(50);
 
 			Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
-
 			if (amount <= loanReq) {
-				LoanRequest lr = new LoanRequest(this, bank, amount, 0);
+				LoanRequest lr = new LoanRequest(this.name, bank.name, amount, 0);
 				System.out.println(this.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
 				requestHM.put(this.name, lr);
 			} else if (amount > 0) {
-				LoanRequest lr = new LoanRequest(this, bank, loanReq, 0);
+				LoanRequest lr = new LoanRequest(this.name, bank.name, loanReq, 0);
 				System.out.println(this.name + " requests a loan of " + loanReq + " dollar(s) from " + bank.name);
 				requestHM.put(this.name, lr);
 			}
@@ -72,6 +71,12 @@ public class Customer extends Thread {
 				for (String s : requestHM.keySet()) {
 					if (s.equalsIgnoreCase(Thread.currentThread().getName())) {
 						LoanRequest lr = (LoanRequest) requestHM.get(s);
+						if(lr.amount == -1) {
+						System.out.println("1 :"+lr.cust);
+						System.out.println("1 :"+lr.bank);
+						System.out.println("1 :"+lr.amount);
+						System.out.println("1 :"+lr.amountIssued);
+						
 						if (lr != null && lr.amountIssued > 0) {
 							System.out.println("Removing 1");
 							requestHM.remove(s);
@@ -82,11 +87,12 @@ public class Customer extends Thread {
 							bankArrayList.remove(lr.bank);
 						}
 					}
+					}
 					if (bankArrayList.contains(s)) {
-						System.out.println("2");
+						System.out.println("2 making it true");
 						LoanRequest lr = (LoanRequest) requestHM.get(s);
-						if (lr.cust.name.equalsIgnoreCase(Thread.currentThread().getName())) {
-							requestRaiseFlag = false;
+						if (lr.cust.equalsIgnoreCase(Thread.currentThread().getName())) {
+							requestRaiseFlag = true;
 						}
 					}
 				}
@@ -101,12 +107,12 @@ public class Customer extends Thread {
 						Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
 
 						if (amount <= loanReq) {
-							LoanRequest lr = new LoanRequest(cust, bank, amount, 0);
+							LoanRequest lr = new LoanRequest(name, bank.name, amount, 0);
 							System.out.println(
 									cust.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
 							requestHM.put(this.name, lr);
 						} else if (amount > 0) {
-							LoanRequest lr = new LoanRequest(this, bank, loanReq, 0);
+							LoanRequest lr = new LoanRequest(name, bank.name, loanReq, 0);
 							System.out.println(
 									this.name + " requests a loan of " + loanReq + " dollar(s) from " + bank.name);
 							requestHM.put(this.name, lr);
