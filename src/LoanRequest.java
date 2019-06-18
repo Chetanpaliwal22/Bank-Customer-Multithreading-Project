@@ -2,14 +2,35 @@
 public class LoanRequest {
 	String cust;
 	String bank;
-	int amount;
+	int requestamount;
 	int amountIssued;
+	boolean fromCustomerFlag;
+	boolean fromBankFlag;
 
-	public LoanRequest(String custt, String bankk, int amountt,int amountIssuedd) {
+	public LoanRequest(String custt, String bankk, int amountt, int amountIssuedd, boolean fromCustomerFlagg,
+			boolean fromBankFlagg) {
 		cust = custt;
 		bank = bankk;
-		amount = amountt;
+		requestamount = amountt;
 		amountIssued = amountIssuedd;
+		fromCustomerFlag = fromCustomerFlagg;
+		fromBankFlag = fromBankFlagg;
+	}
+
+	public boolean isFromCustomerFlag() {
+		return fromCustomerFlag;
+	}
+
+	public void setFromCustomerFlag(boolean fromCustomerFlag) {
+		this.fromCustomerFlag = fromCustomerFlag;
+	}
+
+	public boolean isFromBankFlag() {
+		return fromBankFlag;
+	}
+
+	public void setFromBankFlag(boolean fromBankFlag) {
+		this.fromBankFlag = fromBankFlag;
 	}
 
 	public String getCust() {
@@ -37,10 +58,10 @@ public class LoanRequest {
 	}
 
 	public int getAmount() {
-		return amount;
+		return requestamount;
 	}
 
 	public void setAmount(int amount) {
-		this.amount = amount;
+		this.requestamount = amount;
 	}
 }

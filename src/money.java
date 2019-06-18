@@ -6,8 +6,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class money {
 
-	static ConcurrentHashMap<String,LoanRequest> requestHMap = new ConcurrentHashMap<String,LoanRequest>();
-	
+	static ConcurrentHashMap<String, LoanRequest> requestHMap = new ConcurrentHashMap<String, LoanRequest>();
+
+	LinkedBlockingQueue<Integer> lbq = new LinkedBlockingQueue<Integer>();
+
 	static ArrayList<Customer> custArrayList = new ArrayList<Customer>();
 	static ArrayList<Bank> bankArrayList = new ArrayList<Bank>();
 	static HashMap<Customer, Thread> hashMapCust = new HashMap<Customer, Thread>();
@@ -17,7 +19,7 @@ public class money {
 
 		getBankData();
 		getCustomerData();
-		
+
 		for (int i = 0; i < custArrayList.size(); i++) {
 			Customer cust = custArrayList.get(i);
 			cust.setBankArrayList(bankArrayList);
@@ -26,7 +28,7 @@ public class money {
 			t1.start();
 			hashMapCust.put(cust, t1);
 		}
-		
+
 		for (int i = 0; i < bankArrayList.size(); i++) {
 			Bank bank = bankArrayList.get(i);
 			Thread t1 = new Thread(bank);
@@ -35,7 +37,6 @@ public class money {
 			hashMapBank.put(bankArrayList.get(i), t1);
 		}
 
-		
 	}
 
 	private static void getCustomerData() {
@@ -49,7 +50,7 @@ public class money {
 				Customer cust = new Customer(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
 						Integer.parseInt(
 								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						0, requestHMap,bankArrayList);
+						0, requestHMap, bankArrayList);
 				custArrayList.add(cust);
 				System.out.println(cust.name + ": " + cust.loanReq);
 			}
