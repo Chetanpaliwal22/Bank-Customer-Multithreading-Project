@@ -1,12 +1,13 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class money {
 
-	private static LinkedBlockingQueue<LoanRequest> linkedBlockQueue = new LinkedBlockingQueue<LoanRequest>();
-
+	static ConcurrentHashMap<String,LoanRequest> requestHMap = new ConcurrentHashMap<String,LoanRequest>();
+	
 	static ArrayList<Customer> custArrayList = new ArrayList<Customer>();
 	static ArrayList<Bank> bankArrayList = new ArrayList<Bank>();
 	static HashMap<Customer, Thread> hashMapCust = new HashMap<Customer, Thread>();
@@ -14,12 +15,14 @@ public class money {
 
 	public static void main(String[] args) {
 
-		getCustomerData();
 		getBankData();
+		getCustomerData();
+		
 
 		for (int i = 0; i < bankArrayList.size(); i++) {
 			Bank bank = bankArrayList.get(i);
 			Thread t1 = new Thread(bank);
+			t1.setName(bank.name);
 			t1.start();
 			hashMapBank.put(bankArrayList.get(i), t1);
 		}
@@ -28,6 +31,7 @@ public class money {
 			Customer cust = custArrayList.get(i);
 			cust.setBankArrayList(bankArrayList);
 			Thread t1 = new Thread(cust);
+			t1.setName(cust.name);
 			t1.start();
 			hashMapCust.put(cust, t1);
 		}
@@ -44,7 +48,7 @@ public class money {
 				Customer cust = new Customer(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
 						Integer.parseInt(
 								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						0, linkedBlockQueue);
+						0, requestHMap,bankArrayList);
 				custArrayList.add(cust);
 				System.out.println(cust.name + ": " + cust.loanReq);
 			}
@@ -63,7 +67,7 @@ public class money {
 				Bank bank = new Bank(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
 						Integer.parseInt(
 								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						null, "dummyCustName", linkedBlockQueue);
+						null, "dummyCustName", requestHMap);
 				bankArrayList.add(bank);
 				System.out.println(bank.name + ": " + bank.balance);
 			}

@@ -1,52 +1,62 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Bank extends Thread {
 	String name;
 	int balance;
 	String custName;
-	
-	//money money = new money();
-	private LinkedBlockingQueue<LoanRequest> linkedBlockQueue;
-	
-	Bank(String bankName, int bankBalance, ArrayList<Customer> custArrListt,String custNamee,LinkedBlockingQueue<LoanRequest> linkedBlockQueuee) {
+
+	// money money = new money();
+	ConcurrentHashMap<String, LoanRequest> requestHM;
+
+	Bank(String bankName, int bankBalance, ArrayList<Customer> custArrListt, String custNamee,
+			ConcurrentHashMap<String, LoanRequest> linkedBlockQueuee) {
 		name = bankName;
 		balance = bankBalance;
 		custName = custNamee;
-		linkedBlockQueue = linkedBlockQueuee;
+		requestHM = linkedBlockQueuee;
 	}
 
 	@Override
 	public void run() {
-		resolveReqeust(this,custName,balance,linkedBlockQueue);
+		resolveReqeust(this, custName, balance, requestHM);
 	}
 
-	public synchronized void resolveReqeust(Bank bank,String custName,int bankBalance,LinkedBlockingQueue<LoanRequest> linkedBlockQueuee) {
+	public synchronized void resolveReqeust(Bank bank, String custName, int bankBalance,
+			ConcurrentHashMap<String, LoanRequest> requestHM) {
 		try {
-			if(linkedBlockQueuee.size() > 0) {
-				while (!linkedBlockQueuee.isEmpty()) {
-					Iterator value = linkedBlockQueuee.iterator();
-				while(value.hasNext()) {
-					LoanRequest lr = (LoanRequest) value.next();
-					if(lr.bank != null && lr.bank.name.equalsIgnoreCase(Thread.currentThread().getName())) {
-						System.out.println("Catched in "+Thread.currentThread().getName());
+			 while(true) {
+			boolean flag = false;
+			System.out.println("size: " + requestHM.size());
+			if (requestHM.size() > 0) {
+				while (!requestHM.isEmpty()) {
+					for (String s : requestHM.keySet()) {
+						System.out.println("Processing key: "+s);
+						if (requestHM.get(s).bank.name.equalsIgnoreCase(Thread.currentThread().getName())) {
+							LoanRequest lr = (LoanRequest) requestHM.get(s);
+							requestHM.remove(s);
+							System.out.println("Name matched.");
+							System.out.println(lr.bank.name);
+							System.out.println(Thread.currentThread().getName());
+							if (lr != null && lr.bank != null && lr.bank.name.equalsIgnoreCase(Thread.currentThread().getName())) {
+								System.out.println("bankBalance: "+bankBalance);
+								System.out.println("lr.amount "+lr.amount);
+								if (bankBalance >= lr.amount) {
+									bankBalance = bankBalance - lr.amount;
+									System.out.println(lr.bank.name + " approves a loan of " + lr.amount
+											+ " dollars from " + lr.cust.name);
+								}
+							}
+						}
 					}
+					Thread.sleep(10000);
+					System.out.println("Processing the request in money thread.");
+
 				}
-					//if (loanReqArray. size() > 0) {
-						System.out.println("Processing the request in money thread.");
-//						LoanRequest lr = loanReqArray.poll();
-//						if (lr.amount <= lr.bank.balance) {
-//							bank.balance = bank.balance - lr.amount;
-//							System.out.println(lr.bank.name + " approves a loan of " + lr.amount + " dollars from "
-//									+ lr.cust.name + ".");
-//						} else {
-//							bank.custArrList.remove(lr.cust);
-//							System.out.println("Request not processed");
-//						}
-					}
-				}
-			//}
+			}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

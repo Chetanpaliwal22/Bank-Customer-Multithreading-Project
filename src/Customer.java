@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Customer extends Thread {
@@ -8,16 +9,17 @@ public class Customer extends Thread {
 	String name;
 	Integer loanReq;
 	int disbursedAmt;
-	LinkedBlockingQueue<LoanRequest> linkedBlockQueue;
-	public ArrayList<Bank> bankArrayList = new ArrayList<Bank>();
+	private ConcurrentHashMap<String,LoanRequest> requestHM;
+	public ArrayList<Bank> bankArrayList;
 	money money = new money();
 
 	Customer(String custName, Integer loanRequirement, int disbursedAmount,
-			LinkedBlockingQueue<LoanRequest> linkedBlockQueuee) {
+			ConcurrentHashMap<String,LoanRequest> linkedBlockQueuee,ArrayList<Bank> bankArrayListt) {
 		name = custName;
 		loanReq = loanRequirement;
 		disbursedAmt = disbursedAmount;
-		linkedBlockQueue = linkedBlockQueuee;
+		requestHM = linkedBlockQueuee;
+		bankArrayList = bankArrayListt;
 	}
 
 	public Integer getLoanReq() {
@@ -38,25 +40,24 @@ public class Customer extends Thread {
 
 	@Override
 	public void run() {
-		generateReqeust(this, bankArrayList, linkedBlockQueue);
+		generateReqeust(this, bankArrayList, requestHM);
 	}
 
 	public synchronized void generateReqeust(Customer cust, ArrayList<Bank> bankArrayList,
-			LinkedBlockingQueue<LoanRequest> linkedBlockQueue) {
+			 ConcurrentHashMap<String,LoanRequest> requestHM) {
 		try {
 			// while(true) {
 			// while (!bankArrayList.isEmpty()) {
-
 			Random rand = new Random();
 			int amount = rand.nextInt(50);
-			System.out.println("Size: " + bankArrayList.size());
+			System.out.println("Size in Customer Bank Array: " + bankArrayList.size());
 			Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
 
 			LoanRequest lr = new LoanRequest(cust, bank, amount);
+			System.out.println("lr.getBankName(): "+lr.bank.name);
 			if (amount < lr.bank.balance) {
-				System.out.println(
-						"Approve " + cust.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
-				linkedBlockQueue.add(lr);
+				System.out.println(cust.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
+				requestHM.put(lr.cust.name,lr);
 			} else {
 				System.out.println("Deny Bank Array LIst size: " + bankArrayList.size());
 				// bankArrayList.remove(bank);
