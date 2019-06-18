@@ -3,11 +3,13 @@ public class LoanRequest {
 	Customer cust;
 	Bank bank;
 	int amount;
+	int amountIssued;
 
-	public LoanRequest(Customer custt, Bank bankk, int amountt) {
+	public LoanRequest(Customer custt, Bank bankk, int amountt,int amountIssuedd) {
 		cust = custt;
 		bank = bankk;
 		amount = amountt;
+		amountIssued = amountIssuedd;
 	}
 
 	public Customer getCust() {

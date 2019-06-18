@@ -18,15 +18,6 @@ public class money {
 		getBankData();
 		getCustomerData();
 		
-
-		for (int i = 0; i < bankArrayList.size(); i++) {
-			Bank bank = bankArrayList.get(i);
-			Thread t1 = new Thread(bank);
-			t1.setName(bank.name);
-			t1.start();
-			hashMapBank.put(bankArrayList.get(i), t1);
-		}
-
 		for (int i = 0; i < custArrayList.size(); i++) {
 			Customer cust = custArrayList.get(i);
 			cust.setBankArrayList(bankArrayList);
@@ -35,6 +26,16 @@ public class money {
 			t1.start();
 			hashMapCust.put(cust, t1);
 		}
+		
+		for (int i = 0; i < bankArrayList.size(); i++) {
+			Bank bank = bankArrayList.get(i);
+			Thread t1 = new Thread(bank);
+			t1.setName(bank.name);
+			t1.start();
+			hashMapBank.put(bankArrayList.get(i), t1);
+		}
+
+		
 	}
 
 	private static void getCustomerData() {

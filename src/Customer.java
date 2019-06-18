@@ -1,3 +1,4 @@
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
@@ -7,14 +8,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Customer extends Thread {
 
 	String name;
-	Integer loanReq;
+	int loanReq;
 	int disbursedAmt;
-	private ConcurrentHashMap<String,LoanRequest> requestHM;
+	private ConcurrentHashMap<String, LoanRequest> requestHM;
 	public ArrayList<Bank> bankArrayList;
 	money money = new money();
 
 	Customer(String custName, Integer loanRequirement, int disbursedAmount,
-			ConcurrentHashMap<String,LoanRequest> linkedBlockQueuee,ArrayList<Bank> bankArrayListt) {
+			ConcurrentHashMap<String, LoanRequest> linkedBlockQueuee, ArrayList<Bank> bankArrayListt) {
 		name = custName;
 		loanReq = loanRequirement;
 		disbursedAmt = disbursedAmount;
@@ -40,32 +41,85 @@ public class Customer extends Thread {
 
 	@Override
 	public void run() {
+
+		if (bankArrayList.size() > 0) {
+			Random rand = new Random();
+			int amount = rand.nextInt(50);
+
+			Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
+
+			if (amount <= loanReq) {
+				LoanRequest lr = new LoanRequest(this, bank, amount, 0);
+				System.out.println(this.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
+				requestHM.put(this.name, lr);
+			} else if (amount > 0) {
+				LoanRequest lr = new LoanRequest(this, bank, loanReq, 0);
+				System.out.println(this.name + " requests a loan of " + loanReq + " dollar(s) from " + bank.name);
+				requestHM.put(this.name, lr);
+			}
+		} else {
+			System.out.println("Bank is not there to raise the request.");
+		}
 		generateReqeust(this, bankArrayList, requestHM);
 	}
 
 	public synchronized void generateReqeust(Customer cust, ArrayList<Bank> bankArrayList,
-			 ConcurrentHashMap<String,LoanRequest> requestHM) {
+			ConcurrentHashMap<String, LoanRequest> requestHM) {
 		try {
-			// while(true) {
-			// while (!bankArrayList.isEmpty()) {
-			Random rand = new Random();
-			int amount = rand.nextInt(50);
-			System.out.println("Size in Customer Bank Array: " + bankArrayList.size());
-			Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
+			while (!requestHM.isEmpty()) {
+				boolean requestRaiseFlag = false;
 
-			LoanRequest lr = new LoanRequest(cust, bank, amount);
-			System.out.println("lr.getBankName(): "+lr.bank.name);
-			if (amount < lr.bank.balance) {
-				System.out.println(cust.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
-				requestHM.put(lr.cust.name,lr);
-			} else {
-				System.out.println("Deny Bank Array LIst size: " + bankArrayList.size());
-				// bankArrayList.remove(bank);
+				for (String s : requestHM.keySet()) {
+					if (s.equalsIgnoreCase(Thread.currentThread().getName())) {
+						LoanRequest lr = (LoanRequest) requestHM.get(s);
+						if (lr != null && lr.amountIssued > 0) {
+							System.out.println("Removing 1");
+							requestHM.remove(s);
+							loanReq = loanReq - lr.amountIssued;
+						} else if (lr.amountIssued == -1) {
+							requestHM.remove(s);
+							System.out.println("Removing 2");
+							bankArrayList.remove(lr.bank);
+						}
+					}
+					if (bankArrayList.contains(s)) {
+						System.out.println("2");
+						LoanRequest lr = (LoanRequest) requestHM.get(s);
+						if (lr.cust.name.equalsIgnoreCase(Thread.currentThread().getName())) {
+							requestRaiseFlag = false;
+						}
+					}
+				}
+				//System.out.println("3");
+				// Thread.sleep(1000);
+				if (requestRaiseFlag) {
+					System.out.println("4");
+					if (bankArrayList.size() > 0) {
+						Random rand = new Random();
+						int amount = rand.nextInt(50);
+
+						Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
+
+						if (amount <= loanReq) {
+							LoanRequest lr = new LoanRequest(cust, bank, amount, 0);
+							System.out.println(
+									cust.name + " requests a loan of " + amount + " dollar(s) from " + bank.name);
+							requestHM.put(this.name, lr);
+						} else if (amount > 0) {
+							LoanRequest lr = new LoanRequest(this, bank, loanReq, 0);
+							System.out.println(
+									this.name + " requests a loan of " + loanReq + " dollar(s) from " + bank.name);
+							requestHM.put(this.name, lr);
+						} else {
+							System.out.println("Customer has reached the objective. " + cust.name);
+						}
+					} else {
+						System.out.println("Bank is not there to raise the request.");
+					}
+				}
+
 			}
-			// System.out.println("Size: " + loanReqArray.size());
-			// Thread.sleep(1000);
-			// }
-			// }
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
