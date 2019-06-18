@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class money {
 
-	private LinkedBlockingQueue<String> linkedBlockQueue = new LinkedBlockingQueue<String>();
+	private static LinkedBlockingQueue<LoanRequest> linkedBlockQueue = new LinkedBlockingQueue<LoanRequest>();
 
 	static ArrayList<Customer> custArrayList = new ArrayList<Customer>();
 	static ArrayList<Bank> bankArrayList = new ArrayList<Bank>();
@@ -26,9 +26,10 @@ public class money {
 
 		for (int i = 0; i < custArrayList.size(); i++) {
 			Customer cust = custArrayList.get(i);
+			cust.setBankArrayList(bankArrayList);
 			Thread t1 = new Thread(cust);
 			t1.start();
-			hashMapCust.put(custArrayList.get(i), t1);
+			hashMapCust.put(cust, t1);
 		}
 	}
 
@@ -40,11 +41,12 @@ public class money {
 			String inputLine = "";
 			System.out.println("** Customers and loan objectives **");
 			while ((inputLine = br.readLine()) != null) {
-				Customer cust = new Customer(inputLine.subSequence(1, inputLine.indexOf(',')).toString(), Integer
-						.parseInt((String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						0);
+				Customer cust = new Customer(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
+						Integer.parseInt(
+								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
+						0, linkedBlockQueue);
 				custArrayList.add(cust);
-				System.out.println(cust.name+": "+cust.loanReq);
+				System.out.println(cust.name + ": " + cust.loanReq);
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -61,9 +63,9 @@ public class money {
 				Bank bank = new Bank(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
 						Integer.parseInt(
 								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						null);
+						null, "dummyCustName", linkedBlockQueue);
 				bankArrayList.add(bank);
-				System.out.println(bank.name+": "+bank.balance);
+				System.out.println(bank.name + ": " + bank.balance);
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
