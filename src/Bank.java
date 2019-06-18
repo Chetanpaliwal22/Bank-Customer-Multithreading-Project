@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Bank extends Thread {
@@ -25,6 +26,13 @@ public class Bank extends Thread {
 		try {
 			if(linkedBlockQueuee.size() > 0) {
 				while (!linkedBlockQueuee.isEmpty()) {
+					Iterator value = linkedBlockQueuee.iterator();
+				while(value.hasNext()) {
+					LoanRequest lr = (LoanRequest) value.next();
+					if(lr.bank != null && lr.bank.name.equalsIgnoreCase(Thread.currentThread().getName())) {
+						System.out.println("Catched in "+Thread.currentThread().getName());
+					}
+				}
 					//if (loanReqArray. size() > 0) {
 						System.out.println("Processing the request in money thread.");
 //						LoanRequest lr = loanReqArray.poll();
