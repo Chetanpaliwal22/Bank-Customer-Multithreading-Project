@@ -8,7 +8,7 @@ public class money {
 
 	static ConcurrentHashMap<String, LoanRequest> requestHMap = new ConcurrentHashMap<String, LoanRequest>();
 
-	LinkedBlockingQueue<Integer> lbq = new LinkedBlockingQueue<Integer>();
+	// LinkedBlockingQueue<String> lbq = new LinkedBlockingQueue<String>();
 
 	static ArrayList<Customer> custArrayList = new ArrayList<Customer>();
 	static ArrayList<Bank> bankArrayList = new ArrayList<Bank>();
