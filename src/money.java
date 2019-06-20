@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -8,8 +9,8 @@ public class money {
 
 	static money moneyobj = new money();
 	
-	static ConcurrentHashMap<String, LoanRequest> requestHMap = new ConcurrentHashMap<String, LoanRequest>();
-
+	static BlockingQueue<String> requestBQ = new LinkedBlockingQueue<String>();
+	
 	static ArrayList<Customer> custArrayList = new ArrayList<Customer>();
 	static ArrayList<Bank> bankArrayList = new ArrayList<Bank>();
 	static HashMap<Customer, Thread> hashMapCust = new HashMap<Customer, Thread>();
@@ -17,9 +18,12 @@ public class money {
 
 	public static void main(String[] args) {
 
-		getBankData();
-		getCustomerData();
-
+		String pathBank = "G:\\Java Project\\Bank-Customer-Multithreading-Project\\src\\banks.txt";
+		String pathCust = "G:\\Java Project\\Bank-Customer-Multithreading-Project\\src\\customers.txt";
+		
+		getCustomerData( pathCust);
+		getBankData( pathBank);
+		
 		for (int i = 0; i < custArrayList.size(); i++) {
 			Customer cust = custArrayList.get(i);
 			cust.setBankArrayList(bankArrayList);
@@ -39,10 +43,11 @@ public class money {
 
 	}
 
-	private static void getCustomerData() {
+	private static void getCustomerData(String path) {
 		try {
+			
 			FileReader fr = new FileReader(
-					"G:\\Java Project\\Bank-Customer-Multithreading-Project\\src\\customers.txt");
+					path);
 			BufferedReader br = new BufferedReader(fr);
 			String inputLine = "";
 			System.out.println("** Customers and loan objectives **");
@@ -50,7 +55,7 @@ public class money {
 				Customer cust = new Customer(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
 						Integer.parseInt(
 								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						0, requestHMap, bankArrayList,moneyobj);
+						0, requestBQ, bankArrayList,moneyobj);
 				custArrayList.add(cust);
 				System.out.println(cust.name + ": " + cust.loanReq);
 			}
@@ -59,9 +64,9 @@ public class money {
 		}
 	}
 
-	private static void getBankData() {
+	private static void getBankData(String path) {
 		try {
-			FileReader fr = new FileReader("G:\\Java Project\\Bank-Customer-Multithreading-Project\\src\\banks.txt");
+			FileReader fr = new FileReader(path);
 			BufferedReader br = new BufferedReader(fr);
 			String inputLine = "";
 			System.out.println("** Banks and financial resources **");
@@ -69,7 +74,7 @@ public class money {
 				Bank bank = new Bank(inputLine.subSequence(1, inputLine.indexOf(',')).toString(),
 						Integer.parseInt(
 								(String) inputLine.subSequence(inputLine.indexOf(',') + 1, inputLine.indexOf('}'))),
-						null, "dummyCustName", requestHMap,moneyobj);
+						null, "dummyCustName", requestBQ,moneyobj);
 				bankArrayList.add(bank);
 				System.out.println(bank.name + ": " + bank.balance);
 			}
@@ -96,12 +101,12 @@ public class money {
 		System.out.println(cust+ " requests a loan of " + amount + " dollar(s) from " + bank);
 	}
 	
-	public void noteReachedObjectiveCust(String name) {
-		System.out.println(name+" was only able to borrow 98 dollar(s). Boo Hoo!");
+	public void noteReachedObjectiveCust(String name,int amount) {
+		System.out.println(name+" was only able to borrow "+amount+" dollar(s). Boo Hoo!");
 	}
 
-	public void reachedObjectiveCust(String name) {
-		System.out.println(name+" has reached the objective of 450 dollar(s). Woo Hoo!");
+	public void reachedObjectiveCust(String name,int amount) {
+		System.out.println(name+" has reached the objective of "+amount+" dollar(s). Woo Hoo!");
 	}
 
 
