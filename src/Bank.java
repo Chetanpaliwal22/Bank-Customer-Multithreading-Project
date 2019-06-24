@@ -1,8 +1,5 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Bank extends Thread {
 
@@ -24,16 +21,17 @@ public class Bank extends Thread {
 
 	@Override
 	public void run() {
-		// synchronized (requestHM) {
+		
 		try {
 			Thread.sleep(100);
+		
+		resolveRequest(this, custName, balance, requestBQ);
+		Thread.sleep(100);
+		moneyobj.showBankBalance(this.name, balance);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		resolveRequest(this, custName, balance, requestBQ);
-		// System.out.println("bank thread end"+this.name);
-		moneyobj.showBankBalance(this.name, balance);
-		// }
+		
 	}
 
 	public synchronized void resolveRequest(Bank bank, String custName, int bankBalance,
@@ -41,7 +39,6 @@ public class Bank extends Thread {
 		try {
 
 			while (!requestBQ.isEmpty()) {
-				Thread.sleep(150);
 				for (String s : requestBQ) {
 
 					String[] inputArray = s.split(":");
@@ -52,7 +49,7 @@ public class Bank extends Thread {
 						if (inputArray != null && inputArray[1] != null) {
 
 							if (balance >= Integer.parseInt(inputArray[2])) {
-								// System.out.println("Bank: " + 1);
+								// "Bank: " + 1);
 								this.balance = this.balance - Integer.parseInt(inputArray[2]);
 								moneyobj.approveLoanBank(inputArray[1], Integer.parseInt(inputArray[2]), inputArray[0]);
 								String newlr = inputArray[0] + ":" + this.name + ":" + -1 + ":" + inputArray[2] + ":"

@@ -1,0 +1,96 @@
+** Banks and financial resources **
+rbc: 800
+bmo: 700
+ing: 200
+** Customers and loan objectives **
+jill: 450
+joe: 157
+bob: 100
+sue: 125
+joe requests a loan of 25 dollar(s) from bmo
+jill requests a loan of 14 dollar(s) from ing
+sue requests a loan of 8 dollar(s) from bmo
+bob requests a loan of 3 dollar(s) from ing
+bmo approves a loan of 25 dollars from joe
+bmo approves a loan of 8 dollars from sue
+ing approves a loan of 14 dollars from jill
+ing approves a loan of 3 dollars from bob
+sue requests a loan of 30 dollar(s) from ing
+ing approves a loan of 30 dollars from sue
+joe requests a loan of 5 dollar(s) from ing
+ing approves a loan of 5 dollars from joe
+bob requests a loan of 38 dollar(s) from rbc
+rbc approves a loan of 38 dollars from bob
+jill requests a loan of 28 dollar(s) from ing
+ing approves a loan of 28 dollars from jill
+sue requests a loan of 24 dollar(s) from rbc
+rbc approves a loan of 24 dollars from sue
+bob requests a loan of 36 dollar(s) from bmo
+bmo approves a loan of 36 dollars from bob
+bob requests a loan of 18 dollar(s) from ing
+ing approves a loan of 18 dollars from bob
+jill requests a loan of 21 dollar(s) from bmo
+joe requests a loan of 43 dollar(s) from bmo
+bmo approves a loan of 43 dollars from joe
+bmo approves a loan of 21 dollars from jill
+sue requests a loan of 45 dollar(s) from bmo
+bob requests a loan of 5 dollar(s) from rbc
+rbc approves a loan of 5 dollars from bob
+bmo approves a loan of 45 dollars from sue
+joe requests a loan of 32 dollar(s) from ing
+ing approves a loan of 32 dollars from joe
+sue requests a loan of 18 dollar(s) from rbc
+rbc approves a loan of 18 dollars from sue
+jill requests a loan of 3 dollar(s) from rbc
+rbc approves a loan of 3 dollars from jill
+jill requests a loan of 36 dollar(s) from bmo
+bmo approves a loan of 36 dollars from jill
+joe requests a loan of 18 dollar(s) from ing
+ing approves a loan of 18 dollars from joe
+joe requests a loan of 19 dollar(s) from bmo
+bmo approves a loan of 19 dollars from joe
+jill requests a loan of 7 dollar(s) from ing
+ing approves a loan of 7 dollars from jill
+joe requests a loan of 5 dollar(s) from rbc
+rbc approves a loan of 5 dollars from joe
+jill requests a loan of 42 dollar(s) from bmo
+bmo approves a loan of 42 dollars from jill
+joe requests a loan of 7 dollar(s) from bmo
+bmo approves a loan of 7 dollars from joe
+joe requests a loan of 3 dollar(s) from bmo
+bmo approves a loan of 3 dollars from joe
+jill requests a loan of 24 dollar(s) from bmo
+bmo approves a loan of 24 dollars from jill
+jill requests a loan of 9 dollar(s) from rbc
+rbc approves a loan of 9 dollars from jill
+jill requests a loan of 2 dollar(s) from bmo
+bmo approves a loan of 2 dollars from jill
+jill requests a loan of 36 dollar(s) from rbc
+rbc approves a loan of 36 dollars from jill
+jill requests a loan of 35 dollar(s) from rbc
+rbc approves a loan of 35 dollars from jill
+jill requests a loan of 27 dollar(s) from bmo
+bmo approves a loan of 27 dollars from jill
+jill requests a loan of 13 dollar(s) from bmo
+bmo approves a loan of 13 dollars from jill
+jill requests a loan of 28 dollar(s) from rbc
+rbc approves a loan of 28 dollars from jill
+jill requests a loan of 8 dollar(s) from rbc
+rbc approves a loan of 8 dollars from jill
+jill requests a loan of 24 dollar(s) from ing
+ing approves a loan of 24 dollars from jill
+jill requests a loan of 13 dollar(s) from bmo
+bmo approves a loan of 13 dollars from jill
+jill requests a loan of 31 dollar(s) from bmo
+bmo approves a loan of 31 dollars from jill
+jill requests a loan of 29 dollar(s) from bmo
+bmo approves a loan of 29 dollars from jill
+jill requests a loan of 20 dollar(s) from rbc
+rbc approves a loan of 20 dollars from jill
+jill has reached the objective of 450 dollar(s). Woo Hoo!
+sue has reached the objective of 125 dollar(s). Woo Hoo!
+bob has reached the objective of 100 dollar(s). Woo Hoo!
+joe has reached the objective of 157 dollar(s). Woo Hoo!
+ing has 21 dollar(s) remaining.
+rbc has 571 dollar(s) remaining.
+bmo has 276 dollar(s) remaining.

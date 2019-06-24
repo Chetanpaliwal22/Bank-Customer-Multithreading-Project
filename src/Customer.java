@@ -1,10 +1,6 @@
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Customer extends Thread {
 
@@ -14,17 +10,20 @@ public class Customer extends Thread {
 	int loanReq;
 	int disbursedAmt;
 
-	public ArrayList<Bank> bankArrayList;
+	public ArrayList<String> bankArrayList = new ArrayList<String>();;
 	money moneyobj;
 
 	Customer(String custName, Integer loanRequirement, int disbursedAmount, BlockingQueue<String> requestBQQ,
-			ArrayList<Bank> bankArrayListt, money moneyobjj) {
+			ArrayList<String> bankArrayListt, money moneyobjj) {
 		name = custName;
 		loanReq = loanRequirement;
 		disbursedAmt = disbursedAmount;
 		requestBQ = requestBQQ;
-		bankArrayList = bankArrayListt;
 		moneyobj = moneyobjj;
+
+		for (int i = 0; i < bankArrayListt.size(); i++) {
+			bankArrayList.add(bankArrayListt.get(i));
+		}
 	}
 
 	public Integer getLoanReq() {
@@ -49,21 +48,20 @@ public class Customer extends Thread {
 
 			if (bankArrayList.size() > 0) {
 				Random rand = new Random();
-				int amount = rand.nextInt(50)+1;
+				int amount = rand.nextInt(50) + 1;
 
-				Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
+				String bankName = bankArrayList.get(rand.nextInt(bankArrayList.size()));
 				if (amount <= loanReq) {
-					String lr = this.name + ":" + bank.name + ":" + amount + ":" + 0 + ":" + true + ":" + false;
-					moneyobj.loanRequestCustomer(this.name, amount, bank.name);
+					String lr = this.name + ":" + bankName + ":" + amount + ":" + 0 + ":" + true + ":" + false;
+					moneyobj.loanRequestCustomer(this.name, amount, bankName);
 					requestBQ.put(lr);
-				}else if (this.loanReq > 0) {
-					String lr = this.name + ":" + bank.name + ":" + this.loanReq + ":" + 0 + ":" + true + ":"
-							+ false;
-					moneyobj.loanRequestCustomer(this.name, this.loanReq, bank.name);
+				} else if (this.loanReq > 0) {
+					String lr = this.name + ":" + bankName + ":" + this.loanReq + ":" + 0 + ":" + true + ":" + false;
+					moneyobj.loanRequestCustomer(this.name, this.loanReq, bankName);
 					requestBQ.put(lr);
 				}
 			} else {
-				System.out.println("Bank is not there to raise the request.");
+				// "Bank is not there to raise the request.");
 			}
 
 			generateRequest(this, bankArrayList, requestBQ);
@@ -73,19 +71,22 @@ public class Customer extends Thread {
 			} else {
 				moneyobj.noteReachedObjectiveCust(this.name, this.disbursedAmt);
 			}
-			//System.out.println("customer thread end" + this.name);
+			// "customer thread end" + this.name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public synchronized void generateRequest(Customer cust, ArrayList<Bank> bankArrayList,
+	public synchronized void generateRequest(Customer cust, ArrayList<String> bankArrayList,
 			BlockingQueue<String> requestBQ) {
 		try {
 
 			while (!requestBQ.isEmpty()) {
-Thread.sleep(100);
+				boolean removeBankData = false;
+				String sremove = "";
+				Random rand = new Random();
+				Thread.sleep(rand.nextInt(100));
 				boolean requestRaiseFlag = false;
 
 				for (String s : requestBQ) {
@@ -96,21 +97,21 @@ Thread.sleep(100);
 							&& inputArray[0].equalsIgnoreCase(Thread.currentThread().getName())) {
 
 						if (Integer.parseInt(inputArray[3]) >= 0) {
-							//System.out.println("Loan Aproved request received from bank.");
-
-							requestBQ.remove(s);
+							removeBankData =true;
+							sremove = s;
+							//requestBQ.remove(s);
 							this.loanReq = this.loanReq - Integer.parseInt(inputArray[3]);
-							//System.out.println("loan req: " + this.loanReq);
 							this.disbursedAmt = this.disbursedAmt + Integer.parseInt(inputArray[3]);
 							requestRaiseFlag = true;
 						} else if (Integer.parseInt(inputArray[3]) == -1) {
-							requestBQ.remove(s);
-							//System.out.println("Loan Denied request received from bank.");
-							bankArrayList.remove(inputArray[1]);
+							//requestBQ.remove(s);
+							sremove = s;
+							bankArrayList.remove(String.valueOf(inputArray[1]).trim());
+							removeBankData = true;
 							requestRaiseFlag = true;
 						} else {
-							System.out.println("not going to above two: " + inputArray[1] + " : " + inputArray[0]
-									+ " : " + inputArray[3]);
+							// "not going to above two: " + inputArray[1] + " : " + inputArray[0]
+							// + " : " + inputArray[3]);
 						}
 					}
 				}
@@ -118,27 +119,40 @@ Thread.sleep(100);
 				if (requestRaiseFlag) {
 
 					if (bankArrayList.size() > 0) {
-						Random rand = new Random();
-						int amount = rand.nextInt(50)+1;
+						int amount = rand.nextInt(50) + 1;
 
-						Bank bank = bankArrayList.get(rand.nextInt(bankArrayList.size()));
+						String bankName = bankArrayList.get(rand.nextInt(bankArrayList.size()));
 
 						if (amount <= this.loanReq) {
-							String newlr = this.name + ":" + bank.name + ":" + amount + ":" + 0 + ":" + true + ":"
+							String newlr = this.name + ":" + bankName + ":" + amount + ":" + 0 + ":" + true + ":"
 									+ false;
-							moneyobj.loanRequestCustomer(this.name, amount, bank.name);
+							moneyobj.loanRequestCustomer(this.name, amount, bankName);
 							requestBQ.put(newlr);
+							if(removeBankData) {
+								requestBQ.remove(sremove);
+							}
 						} else if (this.loanReq > 0) {
-							String newlr = this.name + ":" + bank.name + ":" + this.loanReq + ":" + 0 + ":" + true + ":"
+
+							String newlr = this.name + ":" + bankName + ":" + this.loanReq + ":" + 0 + ":" + true + ":"
 									+ false;
-							moneyobj.loanRequestCustomer(this.name, this.loanReq, bank.name);
+							moneyobj.loanRequestCustomer(this.name, this.loanReq, bankName);
 							requestBQ.put(newlr);
+							if(removeBankData) {
+								requestBQ.remove(sremove);
+							}
 						} else {
-							//System.out.println("Customer has reached the objective. " + cust.name);
+
+							if(removeBankData) {
+								requestBQ.remove(sremove);
+							}
+							// "Customer has reached the objective. " + cust.name);
 						}
 
 					} else {
-						System.out.println("Bank is not there to raise the request.");
+						if(removeBankData) {
+							requestBQ.remove(sremove);
+						}
+						// Bank is not there to raise the request.
 					}
 				}
 			}
@@ -150,11 +164,11 @@ Thread.sleep(100);
 		}
 	}
 
-	public ArrayList<Bank> getBankArrayList() {
+	public ArrayList<String> getBankArrayList() {
 		return bankArrayList;
 	}
 
-	public void setBankArrayList(ArrayList<Bank> bankArrayList) {
+	public void setBankArrayList(ArrayList<String> bankArrayList) {
 		this.bankArrayList = bankArrayList;
 	}
 }
