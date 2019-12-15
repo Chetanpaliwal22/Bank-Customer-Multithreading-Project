@@ -1,3 +1,14 @@
+Description:
+
+This project was part of course COMP6411, Comparative study of programming languages, in this project we have created one Concurrent banking environment in Erlang.
+
+The customer will contact multiple bank for the loan and the bank will approve/reject the loan application based on defined constraint.
+
+The program will terminate once all customer get the money they require or banks are out of the fund, in second scenario customer will not be able to meet their loan objective.
+
+In the end the application will display information about all the banking transactions, the amount remaining with Banks and the amount given to each customer.
+
+
 * For Erlang Version:
 
 	To run the code:
@@ -13,7 +24,7 @@
 	Note: 
 	1. For error related to input read:
 	Put the complete source path.
-	2. For calculation purpose I am printing each amount in the end. For example even if customer 1 reach objective in first go his amount will be printed in the 		end with all the cusomter.
+	2. For calculation purpose I am printing each amount in the end. For example even if customer 1 reach objective in first go his 	amount will be printed in the 		end with all the cusomter.
 
 
 	Note:
